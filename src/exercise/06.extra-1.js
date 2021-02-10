@@ -1,21 +1,29 @@
 // useEffect: HTTP requests
 // http://localhost:3000/isolated/exercise/06.js
 
+// Extra 1: handle error
+
 import * as React from 'react'
 import { fetchPokemon, PokemonDataView, PokemonInfoFallback, PokemonForm } from '../pokemon'
 
 function PokemonInfo({ pokemonName }) {
   const [pokemon, setPokemon] = React.useState(null);
+  const [error, setError] = React.useState(null);
   React.useEffect(() => {
-    if (!pokemonName) {
-      return
-    }
-    // handle when switching among pokemon lists
-    setPokemon(null)
     fetchPokemon(pokemonName).then(
-      (pokemonData) => setPokemon(pokemonData)
+      (pokemonData) => setPokemon(pokemonData),
+      // Take the note on this...
+      (error) => setError(error)
     )
   }, [pokemonName])
+
+  if (error) {
+    return (
+      <div role="alert">
+        There was an error: <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
+      </div>
+    )
+  }
 
   if (!pokemonName) {
     return 'Submit a pokemon'
